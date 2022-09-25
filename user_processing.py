@@ -9,7 +9,7 @@ from airflow.hooks.postgres_hook import PostgresHook
 
 
 import json
-from datetime import datetime
+from datetime import datetime,timedelta
 from pandas import json_normalize
 
 
@@ -25,6 +25,7 @@ def _process_user(ti):
         'email':user['email']
     })
     processed_user.to_csv('/tmp/processed_user.csv',index=None,header=False)
+    assert "Hi"=="Hi"
 
 def _store_user():
     hook = PostgresHook(postgres_conn_id='postgres')
@@ -33,7 +34,10 @@ def _store_user():
         filename='/tmp/processed_user.csv'
     )
 
-with DAG('user_processing',start_date=datetime(2022,1,1),schedule_interval='@daily',catchup=False) as dag:
+with DAG('user_processing',start_date=datetime(2022,1,1),
+#schedule_interval='@daily',
+schedule_interval='*/5 * * * *',
+catchup=False) as dag:
     create_table = PostgresOperator(
         task_id = 'create_table',
         postgres_conn_id = 'postgres',
