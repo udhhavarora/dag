@@ -1,3 +1,4 @@
+import queue
 from airflow import DAG
 from airflow.operators.bash import BashOperator
  
@@ -28,7 +29,8 @@ with DAG('parallel_dag', start_date=datetime(2022, 1, 1),
  
     transform = BashOperator(
         task_id='transform',
-        bash_command='sleep 10'
+        queue='high_cpu',
+        bash_command='sleep 30'
     )
  
     extract_a >> load_a
